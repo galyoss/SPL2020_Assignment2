@@ -7,7 +7,7 @@ package bgu.spl.mics;
  */
 public class MessageBusImpl implements MessageBus {
 
-	public static MessageBusImpl getMessageBus(){	return null; } //TODO
+	public static MessageBusImpl getMessageBus(){	return new MessageBusImpl(); } //TODO
 	
 	
 	@Override

@@ -19,9 +19,9 @@ class MessageBusImplTest {
 
     @BeforeEach
     void setUp() { //when constructing MS, the function initialize is called, which calls in turn to register
-        m = MessageBusImpl.getMessageBus();
-        HanSoloMicroservice hansolo = new HanSoloMicroservice();
-        R2D2Microservice R2D2 = new R2D2Microservice(100);
+        this.m = MessageBusImpl.getMessageBus();
+        this.hansolo = new HanSoloMicroservice();
+        this.R2D2 = new R2D2Microservice(100);
         // now we have m contains Q for each microservice
     }
 
