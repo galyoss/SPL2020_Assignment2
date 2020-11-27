@@ -27,8 +27,8 @@ class MessageBusImplTest {
 
 
     @Test
-    //precons: exists event s.t. it has a future object matching it.
-    // the event was sent to a MS(microservice), and the MS finished the job.
+        //precons: exists event s.t. it has a future object matching it.
+        // the event was sent to a MS(microservice), and the MS finished the job.
     void complete() {
 
         AttackEvent att = new AttackEvent(); //let us assume hansolo took the event
@@ -58,8 +58,8 @@ class MessageBusImplTest {
     }
 
     @Test
-    // we create an empty list, then add 2 events. when hansolo gets an event, he inserts 1 into the list, R2 adds 2.
-    // after all tasks, we would like to get 1-2 OR 2-1 (to check round robin)
+        // we create an empty list, then add 2 events. when hansolo gets an event, he inserts 1 into the list, R2 adds 2.
+        // after all tasks, we would like to get 1-2 OR 2-1 (to check round robin)
     void awaitMessage() {
         LinkedList<Integer> received = new LinkedList<Integer>();
         hansolo.subscribeEvent(AttackEvent.class, c ->received.addLast(1));
@@ -82,8 +82,8 @@ class MessageBusImplTest {
     }
 
     @Test //we subscribe both hansolo and R2 to attack events and attack broadcasts.
-            // then, we unregister solo, and send attack events and broadcasts.
-            // if solo somehow got the events\broadcasts, it will fail the test
+        // then, we unregister solo, and send attack events and broadcasts.
+        // if solo somehow got the events\broadcasts, it will fail the test
     void unregister() {
         attackDoneBC attackDone = new attackDoneBC();
         LinkedList<Integer> received = new LinkedList<Integer>();
