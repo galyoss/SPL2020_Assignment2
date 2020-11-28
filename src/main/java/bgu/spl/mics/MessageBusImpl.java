@@ -1,4 +1,8 @@
 package bgu.spl.mics;
+import jdk.internal.net.http.common.Pair;
+
+import  java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The {@link MessageBusImpl class is the implementation of the MessageBus interface.
@@ -6,6 +10,18 @@ package bgu.spl.mics;
  * Only private fields and methods can be added to this class.
  */
 public class MessageBusImpl implements MessageBus {
+
+	Dictionary<Integer,Future<?>> future_event;
+	Dictionary<String,Queue<Event<?>>> name_message;
+	LinkedList<Pair<Message,LinkedList<MicroService>>> event_subsList;
+	AtomicInteger event_counter;
+
+	private MessageBusImpl(){
+		future_event  = new Hashtable<>();
+		name_message = new Hashtable<>();
+		event_subsList = new LinkedList<Pair<Message, LinkedList<MicroService>>>();
+		event_counter = new AtomicInteger(0);
+	}
 
 	public static MessageBusImpl getMessageBus(){	return new MessageBusImpl(); } //TODO
 	
