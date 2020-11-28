@@ -18,6 +18,8 @@ public class Future<T> {
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
+		isDone= false;
+		result=null;
 		
 	}
 	
@@ -30,7 +32,7 @@ public class Future<T> {
      * 	       
      */
 	public T get() {
-		
+		if (result!=null)
         return null; 
 	}
 	
