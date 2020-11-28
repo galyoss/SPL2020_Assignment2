@@ -18,8 +18,8 @@ public class Future<T> {
 	 * This should be the the only public constructor in this class.
 	 */
 	public Future() {
-		isDone= false;
-		result=null;
+		isDone = false;
+		result = null;
 		
 	}
 	
@@ -31,8 +31,9 @@ public class Future<T> {
      * @return return the result of type T if it is available, if not wait until it is available.
      * 	       
      */
-	public T get() {
+	public T get() { //TODO block\sleep\whatever
 		if (result!=null)
+			return result;
         return null; 
 	}
 	
@@ -40,6 +41,8 @@ public class Future<T> {
      * Resolves the result of this Future object.
      */
 	public void resolve (T result) {
+		this.result = result;
+		isDone = true;
 		
 	}
 	
@@ -61,8 +64,10 @@ public class Future<T> {
      * 	       wait for {@code timeout} TimeUnits {@code unit}. If time has
      *         elapsed, return null.
      */
-	public T get(long timeout, TimeUnit unit) {
-		
+	public T get(long timeout, TimeUnit unit) { //TODO sleep block w8 w\e
+			if (isDone)
+				return result;
+
         return null;
 	}
 

@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class MessageBusImpl implements MessageBus {
 
-	private Dictionary<Integer,Future<?>> future_event;
+	private Dictionary<Integer,Future> future_event;
 	private Dictionary<String,Queue<Event<?>>> name_messagesQueue;
 	private LinkedList<Pair<Message,LinkedList<MicroService>>> event_subsList;
 	private AtomicInteger event_counter;
@@ -27,7 +27,7 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	public static MessageBusImpl getMessageBus(){//TODO synchro problems
-		if (instance ==null)
+		if (instance == null)
 			instance = new MessageBusImpl();
 		return instance;
 
