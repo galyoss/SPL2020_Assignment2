@@ -25,7 +25,15 @@ public class MessageBusImpl implements MessageBus {
 		event_subsList = new LinkedList<Pair<Message, LinkedList<MicroService>>>();
 		event_counter = new AtomicInteger(0);
 	}
+	// lets try this:
 
+	/**
+	 * synchro(this){
+	 *     if (instance==null)
+	 *     		instance = new MessageBusImpl();
+	 *     return instance;
+	 * }
+	 */
 	public static MessageBusImpl getMessageBus(){//TODO synchro problems
 		if (instance == null)
 			instance = new MessageBusImpl();
@@ -47,7 +55,7 @@ public class MessageBusImpl implements MessageBus {
 	@Override @SuppressWarnings("unchecked")
 	public <T> void complete(Event<T> e, T result) {
         int serial = e.getSerial();
-        future_event.get(serial).resolve(result); //TODO why doesnt it accept result as T
+        future_event.get(serial).resolve(result);
 	}
 
 	@Override
@@ -68,11 +76,14 @@ public class MessageBusImpl implements MessageBus {
 	}
 
 	@Override
-	public <T> Future<T> sendEvent(Event<T> e) { //COMPLETED!!!!!!!!!!! not tested tho
+	public <T> Future<T> sendEvent(Event<T> e) { //COMPLETED!! not tested tho
 
 	    MicroService m = findSub(e);
+		/*
+		  if m==null, we didnt register the MS yet. lets try sleep\wait?
+		 */
 
-	    if (m!=null) { //there is a MS that can take the event
+		if (m!=null) { //there is a MS that can take the event
 
 
             Future<T> future = new Future<>();

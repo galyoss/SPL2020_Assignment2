@@ -7,6 +7,15 @@ package bgu.spl.mics.application.passiveObjects;
  * <p>
  * Do not add to this class nothing but a single constructor, getters and setters.
  */
-public class Diary {
+public class Diary { //needs to be initialized as singleton
+    int totalAttacks;
+    long HanSoloFinish;
+    long C3POFinish;
+    long R2D2Deactivate;
+    long LeiaTerminate;
+    long HanSoloTerminate;
+    long C3POTerminate;
+    long R2D2Terminate;
+    long LandoTerminate;
 
 }

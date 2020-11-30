@@ -19,14 +19,18 @@ package bgu.spl.mics;
  * <p>
  */
 public abstract class MicroService implements Runnable { 
-    
+    private final String name;
+    private MessageBusImpl MB;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
      *             does not have to be unique)
      */
+    //maybe we should put an int as identifier, coz they said name is not unique
     public MicroService(String name) {
-    	
+        MB = MessageBusImpl.getMessageBus();
+        this.name = name;
+
     }
 
     /**
@@ -75,7 +79,7 @@ public abstract class MicroService implements Runnable {
      *                 queue.
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	
+    	MB.subscribeBroadcast(type,this);
     }
 
     /**
@@ -91,7 +95,7 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-    	
+
         return null; 
     }
 
@@ -102,7 +106,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	
+    	MB.sendBroadcast(b);
     }
 
     /**
@@ -115,14 +119,14 @@ public abstract class MicroService implements Runnable {
      * @param result The result to resolve the relevant Future object.
      *               {@code e}.
      */
-    protected final <T> void complete(Event<T> e, T result) {
-    	
+    protected final <T> void complete(Event<T> e, T result) { //COMPLETED
+    	MB.complete(e,result);
     }
 
     /**
      * this method is called once when the event loop starts.
      */
-    protected abstract void initialize();
+    protected abstract void initialize(); //Abstract, first method in run()
 
     /**
      * Signals the event loop that it must terminate after handling the current
@@ -137,8 +141,8 @@ public abstract class MicroService implements Runnable {
      *         construction time and is used mainly for debugging purposes.
      */
     public final String getName() {
-        return null;
-    }
+        return name;
+    } // COMPLETED
 
     /**
      * The entry point of the micro-service. TODO: you must complete this code
