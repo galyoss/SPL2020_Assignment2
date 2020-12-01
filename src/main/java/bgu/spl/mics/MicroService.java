@@ -20,7 +20,8 @@ package bgu.spl.mics;
  */
 public abstract class MicroService implements Runnable { 
     private final String name;
-    private MessageBusImpl MB;
+    final private MessageBusImpl telegram;
+    private boolean isActive;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -28,8 +29,9 @@ public abstract class MicroService implements Runnable {
      */
     //maybe we should put an int as identifier, coz they said name is not unique
     public MicroService(String name) {
-        MB = MessageBusImpl.getMessageBus();
+        telegram = MessageBusImpl.getMessageBus();
         this.name = name;
+        isActive=true;
 
     }
 
@@ -54,8 +56,8 @@ public abstract class MicroService implements Runnable {
      *                 {@code type} are taken from this micro-service message
      *                 queue.
      */
-    protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
-    	
+    protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {//TODO WTF CALLBACK?!?!??!?!!?!?!!??!!ALJSFDHIQ@U$#Y(!@#$^
+    	telegram.subscribeEvent(type,this);
     }
 
     /**
@@ -78,8 +80,8 @@ public abstract class MicroService implements Runnable {
      *                 {@code type} are taken from this micro-service message
      *                 queue.
      */
-    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
-    	MB.subscribeBroadcast(type,this);
+    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {//TODO wtf callback
+        telegram.subscribeBroadcast(type,this);
     }
 
     /**
@@ -95,8 +97,15 @@ public abstract class MicroService implements Runnable {
      * 	       			null in case no micro-service has subscribed to {@code e.getClass()}.
      */
     protected final <T> Future<T> sendEvent(Event<T> e) {
-
-        return null; 
+        Future<T> future = telegram.sendEvent(e);
+        while (future==null){
+            try{
+                Thread.sleep(200);
+                future = telegram.sendEvent(e);
+            }
+            catch (Exception ex){}
+        }
+        return future;
     }
 
     /**
@@ -106,7 +115,7 @@ public abstract class MicroService implements Runnable {
      * @param b The broadcast message to send
      */
     protected final void sendBroadcast(Broadcast b) {
-    	MB.sendBroadcast(b);
+        telegram.sendBroadcast(b);
     }
 
     /**
@@ -120,7 +129,7 @@ public abstract class MicroService implements Runnable {
      *               {@code e}.
      */
     protected final <T> void complete(Event<T> e, T result) { //COMPLETED
-    	MB.complete(e,result);
+        telegram.complete(e,result);
     }
 
     /**
@@ -133,7 +142,7 @@ public abstract class MicroService implements Runnable {
      * message.
      */
     protected final void terminate() {
-    	
+    	isActive=false;
     }
 
     /**
@@ -150,7 +159,15 @@ public abstract class MicroService implements Runnable {
      */
     @Override
     public final void run() {
-    	
+    	initialize();
+    	while(isActive){
+    	    Message curr;
+    	    try{
+    	        curr = telegram.awaitMessage(this);
+            }catch (Exception e){}
+
+        }
+
     }
 
 }
