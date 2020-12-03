@@ -1,5 +1,10 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.Diary;
+
+import java.util.Dictionary;
+import java.util.Hashtable;
+
 /**
  * The MicroService is an abstract class that any micro-service in the system
  * must extend. The abstract MicroService class is responsible to get and
@@ -22,6 +27,7 @@ public abstract class MicroService implements Runnable {
     private final String name;
     final private MessageBusImpl telegram;
     private boolean isActive;
+    private Dictionary<Class<? extends Message>, Callback> calls;
 
     /**
      * @param name the micro-service name (used mainly for debugging purposes -
@@ -32,6 +38,8 @@ public abstract class MicroService implements Runnable {
         telegram = MessageBusImpl.getMessageBus();
         this.name = name;
         isActive=true;
+        calls = new Hashtable<>();
+        // each MS needs to create its own calls Dictionary
 
     }
 
@@ -56,8 +64,9 @@ public abstract class MicroService implements Runnable {
      *                 {@code type} are taken from this micro-service message
      *                 queue.
      */
-    protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {//TODO WTF CALLBACK?!?!??!?!!?!?!!??!!ALJSFDHIQ@U$#Y(!@#$^
+    protected final <T, E extends Event<T>> void subscribeEvent(Class<E> type, Callback<E> callback) {
     	telegram.subscribeEvent(type,this);
+    	calls.put(type,callback);
     }
 
     /**
@@ -82,6 +91,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {//TODO wtf callback
         telegram.subscribeBroadcast(type,this);
+        calls.put(type,callback);
     }
 
     /**
@@ -158,16 +168,14 @@ public abstract class MicroService implements Runnable {
      * otherwise you will end up in an infinite loop.
      */
     @Override
-    public final void run() {
+    public final void run() { //general run method, each MS needs to terminate itself after this method
     	initialize();
     	while(isActive){
     	    Message curr;
     	    try{
     	        curr = telegram.awaitMessage(this);
+                calls.get(curr.getClass()).call(curr);
             }catch (Exception e){}
-
         }
-
     }
-
 }

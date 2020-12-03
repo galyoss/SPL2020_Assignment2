@@ -83,15 +83,6 @@ public class MessageBusImpl implements MessageBus {
     @Override
     public void sendBroadcast(Broadcast b) {//TODO get answer from forum regarding w8 or drop
         LinkedList<MicroService> subsList = findSubsList(b.getClass());
-        // first impl, w8ing till there is some 1 to broadcast 2
-        while (subsList == null)
-            try {
-                Thread.sleep(100);
-                subsList = findSubsList(b.getClass());
-            } catch (InterruptedException e) {
-            }
-
-        // second impl, throw the broadcast to the garbage
 
         if (subsList != null) {
             for (MicroService m : subsList) {
@@ -166,6 +157,8 @@ public class MessageBusImpl implements MessageBus {
     public Message awaitMessage(MicroService m) throws InterruptedException {//TODO get answers from forum regarding awaitMessage b4 registration
         // assuming initialized b4 await message
         Queue<Message> currQ = name_messagesQueue.get(m);
+        if (currQ==null)
+            throw new IllegalArgumentException("MS is not registered, tried to fetch message");
         synchronized (currQ) {
             while (currQ.isEmpty()) {
                 try {
