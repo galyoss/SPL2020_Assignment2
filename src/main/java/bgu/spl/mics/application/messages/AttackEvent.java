@@ -6,10 +6,17 @@ import java.util.List;
 public class AttackEvent implements Event<Boolean> {
 	private int serial;
 	private int[] ewoksNeeded;
-	long duration;
+	int duration;
 
-	public AttackEvent(List<Integer> ewoks, long duration){
-		ewoksNeeded = ewoks.toArray(ewoks);
+	public int[] getEwoksNeeded() {
+		return ewoksNeeded;
+	}
+
+
+
+	public AttackEvent(int[] ewoks, int duration){
+		ewoksNeeded = ewoks;
+		this.duration = duration;
 
 	}
 
@@ -21,5 +28,9 @@ public class AttackEvent implements Event<Boolean> {
 	@Override
 	public Integer getSerial() {
 		return serial;
+	}
+
+	public int getDuration(){
+		return duration;
 	}
 }

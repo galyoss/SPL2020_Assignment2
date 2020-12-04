@@ -2,13 +2,10 @@ package bgu.spl.mics.application.messages;
 
 import bgu.spl.mics.Event;
 
-public class DeactivationEvent implements Event {
+public class starDestroyerEvent implements Event {
     private int serial;
 
-
-    public DeactivationEvent(){
-
-    }
+    public starDestroyerEvent(){    }
     @Override
     public void setSerial(int value) {
         this.serial=value;
@@ -18,6 +15,4 @@ public class DeactivationEvent implements Event {
     public Integer getSerial() {
         return serial;
     }
-
-
 }

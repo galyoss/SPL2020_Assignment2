@@ -29,24 +29,24 @@ public class Ewoks { //needs to be initialized as singleton, while parsing jason
 
     public void acquireEwoks(int[] need) {
         Arrays.sort(need);
-        for (Ewok ewok : soldiers) {
-            synchronized (ewok) {
-                while (!ewok.available) {
+        for (int i=0;i<need.length;i++){
+            synchronized (soldiers[need[i]]) {
+                while (!soldiers[need[i]].available) {
                     try {
                         wait();
                     } catch (Exception e) {
                     }
                 }
-                ewok.acquire();
+                soldiers[need[i]].acquire();
             }
         }
     }
             //TODO MAKE SURE THIS CRAP WORKS
     public void releaseEwoks(int[] need) {
         Arrays.sort(need);
-        for (Ewok ewok : soldiers) {
-            synchronized (ewok) {
-                ewok.release();
+        for (int i=0;i<need.length;i++) {
+            synchronized (soldiers[need[i]]) {
+                soldiers[need[i]].release();
                 notifyAll();
             }
         }

@@ -43,6 +43,9 @@ public abstract class MicroService implements Runnable {
 
     }
 
+    protected void register(MicroService m){
+        telegram.register(m);
+    }
     /**
      * Subscribes to events of type {@code type} with the callback
      * {@code callback}. This means two things:
