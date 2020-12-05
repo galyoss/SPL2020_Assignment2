@@ -34,6 +34,18 @@ public class C3POMicroservice extends MicroService {//intialize while constructi
             @Override
             public void call(AttackEvent c) {
                 // aquire ewoks, sleep for duration, release ewoks, send done, complete, update timestamp
+                ewoks.acquireEwoks(c.getEwoksNeeded());
+                try {
+                    Thread.sleep(c.getDuration());
+                } catch (InterruptedException e) {
+                }
+                lastAtt = System.currentTimeMillis();
+                ewoks.releaseEwoks(c.getEwoksNeeded());
+                complete(c, true);
+                sendBroadcast(new attackDoneBC());
+
+
+
             }
         });
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {

@@ -74,7 +74,7 @@ public class Future<T> {
     public synchronized T get(long timeout, TimeUnit unit) {//TODO we should think about sleep with interuption?
         if (!isDone) {
             try {
-                Thread.sleep(unit.toMillis(timeout));
+                wait(unit.toMillis(timeout));
             } catch (InterruptedException e) {}
         }
         return result;
