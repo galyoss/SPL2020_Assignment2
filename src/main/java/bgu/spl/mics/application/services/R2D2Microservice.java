@@ -43,7 +43,7 @@ public class R2D2Microservice extends MicroService {
             public void call(starBombedBC c) {
                 System.out.println("starbombed R2"); //TODO
                 Diary.getDiary().setR2D2Terminate(System.currentTimeMillis());
-                R2D2Microservice.super.terminate();
+                terminate();
             }
         });
     }

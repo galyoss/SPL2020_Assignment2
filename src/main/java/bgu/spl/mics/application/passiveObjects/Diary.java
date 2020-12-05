@@ -23,16 +23,18 @@ public class Diary { //needs to be initialized as singleton
     long C3POTerminate;
     long R2D2Terminate;
     long LandoTerminate;
-    static Diary instance=null;
+    static Diary instance = null;
 
 
-    private Diary(){
-        totalAttacks.set(0);
+    private Diary() {
+        totalAttacks = new AtomicInteger(0);
     }
 
-    public synchronized static Diary getDiary(){
-        if (instance == null)
-            instance = new Diary();
+    public synchronized static Diary getDiary() {
+        if (instance == null) {
+            Diary d = new Diary();
+            instance = d;
+        }
         return instance;
     }
 
@@ -41,7 +43,7 @@ public class Diary { //needs to be initialized as singleton
     }
 
     public void increaseAttack() {
-       this.totalAttacks.incrementAndGet();
+        this.totalAttacks.incrementAndGet();
     }
 
     public long getHanSoloFinish() {
@@ -107,10 +109,6 @@ public class Diary { //needs to be initialized as singleton
     public void setLandoTerminate(long landoTerminate) {
         LandoTerminate = landoTerminate;
     }
-
-
-
-
 
 
 }

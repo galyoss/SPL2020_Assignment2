@@ -1,6 +1,7 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.services.*;
 
@@ -25,20 +26,31 @@ public class Main {
 		l2.add(2);
 		l2.add(1);
 		Attack[] attacks = {new Attack(l1, 1000), new Attack(l2, 1000)};
-		Thread leia = new Thread(new LeiaMicroservice(new Attack[2]));//TODO json.attacks
-		Thread hansolo = new Thread(new HanSoloMicroservice());
-		Thread C3PO = new Thread(new C3POMicroservice());
-		Thread R2 = new Thread(new R2D2Microservice(2000)); //TODO json.R2.Duration
-		Thread lando = new Thread(new LandoMicroservice(2000)); //TODO json.lando.duration
+		Thread leia = new Thread(new LeiaMicroservice(attacks), "Leia");//TODO json.attacks
+		Thread hansolo = new Thread(new HanSoloMicroservice(), "Hansolo");
+		Thread C3PO = new Thread(new C3POMicroservice(), "C3PO");
+		Thread R2 = new Thread(new R2D2Microservice(2000),"R2"); //TODO json.R2.Duration
+		Thread lando = new Thread(new LandoMicroservice(2000), "Lando"); //TODO json.lando.duration
 
 
-		hansolo.run();
-		C3PO.run();
-		R2.run();
-		lando.run();
-		leia.run();// TODO make sure leia w8s b4 whe starts sending events
+
+		hansolo.start();
+		C3PO.start();
+		R2.start();
+		lando.start();
+		System.out.println("now about to start leia");
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		leia.start();
+		System.out.println("never get here");
+
+
 
 		try {
+			System.out.println("main join");
 			hansolo.join();
 			C3PO.join();
 			R2.join();

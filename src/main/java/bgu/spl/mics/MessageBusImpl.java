@@ -1,6 +1,6 @@
 package bgu.spl.mics;
 
-import jdk.internal.net.http.common.Pair;
+import bgu.spl.mics.application.passiveObjects.*;
 
 
 import java.util.*;
@@ -90,7 +90,7 @@ public class MessageBusImpl implements MessageBus {
                 Queue<Message> Q = name_messagesQueue.get(m);
                 synchronized (Q) {
                     Q.add(b);
-                    notifyAll();
+                    Q.notifyAll();
                 }
             }
         }
@@ -129,8 +129,9 @@ public class MessageBusImpl implements MessageBus {
             Future<T> future = new Future<>();
             e.setSerial(event_counter.getAndIncrement()); //serilizing the event and its future
             future_event.put(e.getSerial(), future);
-            synchronized (name_messagesQueue.get(m.getName())) { //message Q needs to be ThreadSafe
-                name_messagesQueue.get(m.getName()).add(e); //adding event to the MS's Q.
+            synchronized (name_messagesQueue.get(m)) { //message Q needs to be ThreadSafe
+                name_messagesQueue.get(m).add(e); //adding event to the MS's Q.
+                name_messagesQueue.get(m).notifyAll();
             }
             return future;
 
@@ -163,9 +164,13 @@ public class MessageBusImpl implements MessageBus {
         synchronized (currQ) {
             while (currQ.isEmpty()) {
                 try {
-                    wait();
+                    System.out.println(Thread.currentThread().getName()+" waits");
+                    currQ.wait();
+
                 }
-                catch (Exception e){}
+                catch (Exception e){
+                    System.out.println(e);
+                }
             }
             return currQ.remove();
 

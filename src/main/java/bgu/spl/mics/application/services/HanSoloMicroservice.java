@@ -56,7 +56,7 @@ public class HanSoloMicroservice extends MicroService {
                 System.out.println("starbombed HANSO"); //TODO
                 Diary.getDiary().setHanSoloFinish(lastAtt);
                 Diary.getDiary().setHanSoloTerminate(System.currentTimeMillis());
-                HanSoloMicroservice.super.terminate();
+                terminate();
             }
         });
         subscribeBroadcast(attackDoneBC.class, new Callback<attackDoneBC>() {

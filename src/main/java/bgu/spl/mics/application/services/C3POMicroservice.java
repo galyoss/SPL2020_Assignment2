@@ -54,7 +54,7 @@ public class C3POMicroservice extends MicroService {//intialize while constructi
                 System.out.println("starbombed C3PO"); //TODO
                 Diary.getDiary().setC3POFinish(lastAtt);
                 Diary.getDiary().setC3POTerminate(System.currentTimeMillis());
-                C3POMicroservice.super.terminate();
+                terminate();
             }
         });
 

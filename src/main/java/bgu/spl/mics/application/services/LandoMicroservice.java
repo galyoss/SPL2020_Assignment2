@@ -26,6 +26,12 @@ public class LandoMicroservice  extends MicroService {//intialize while construc
             @Override
             public void call(starDestroyerEvent c) {
                 //sleep, send starBOOM BC //TODO
+                try {
+                    Thread.sleep(duration);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                sendBroadcast(new starBombedBC());
             }
         });
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
@@ -33,7 +39,7 @@ public class LandoMicroservice  extends MicroService {//intialize while construc
             public void call(starBombedBC c) {
                 System.out.println("starbombed LANDO"); //TODO
                 Diary.getDiary().setLandoTerminate(System.currentTimeMillis());
-                LandoMicroservice.super.terminate();
+                terminate();
             }
         });
     }

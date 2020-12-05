@@ -10,7 +10,7 @@ import bgu.spl.mics.application.messages.broadcasts.*;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.passiveObjects.*;
 import bgu.spl.mics.MicroService;
-import jdk.vm.ci.code.site.Call;
+
 import bgu.spl.mics.application.passiveObjects.*;
 
 
@@ -36,6 +36,7 @@ public class LeiaMicroservice extends MicroService {
             attackEvents[i] = convertAttEvent(attacks[i]);
 
         }
+
     }
 
     private AttackEvent convertAttEvent(Attack attack) { // single attack conversion
@@ -51,13 +52,18 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         register(this);
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
             @Override
             public void call(starBombedBC c) {
                 System.out.println("starbombed LEIA"); //TODO
                 Diary.getDiary().setLeiaTerminate(System.currentTimeMillis());
-                LeiaMicroservice.super.terminate();
+                terminate();
 
             }
         });
@@ -73,5 +79,10 @@ public class LeiaMicroservice extends MicroService {
                 }
             }
         });
+
+        for(int i=0;i<attackEvents.length;i++) {
+            super.sendEvent(attackEvents[i]);
+            System.out.println("leia sent " + i + " th attackevent");
+        }
     }
 }
