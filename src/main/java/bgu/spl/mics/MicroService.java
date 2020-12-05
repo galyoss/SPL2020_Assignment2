@@ -116,7 +116,7 @@ public abstract class MicroService implements Runnable {
                 Thread.sleep(200);
                 future = telegram.sendEvent(e);
             }
-            catch (Exception ex){}
+            catch (Exception ignored){}
         }
         return future;
     }
@@ -178,7 +178,7 @@ public abstract class MicroService implements Runnable {
     	    try{
     	        curr = telegram.awaitMessage(this);
                 calls.get(curr.getClass()).call(curr);
-            }catch (Exception e){}
+            }catch (Exception ignored){}
         }
     }
 }

@@ -31,7 +31,7 @@ public class Future<T> {
      *
      * @return return the result of type T if it is available, if not wait until it is available.
      */
-    public synchronized T get() { //TODO block\sleep\whatever
+    public synchronized T get() { //synchro so we can wake up when future is resolved
         while (result!=null) {
             try{
                 wait();
@@ -45,7 +45,7 @@ public class Future<T> {
     /**
      * Resolves the result of this Future object.
      */
-    public synchronized void resolve(T result) {
+    public synchronized void resolve(T result) { //synchro so we can wake up when future is resolved
         this.result = result;
         isDone = true;
         notifyAll();
@@ -71,7 +71,7 @@ public class Future<T> {
      * wait for {@code timeout} TimeUnits {@code unit}. If time has
      * elapsed, return null.
      */
-    public synchronized T get(long timeout, TimeUnit unit) {
+    public synchronized T get(long timeout, TimeUnit unit) {//TODO we should think about sleep with interuption?
         if (!isDone) {
             try {
                 Thread.sleep(unit.toMillis(timeout));
