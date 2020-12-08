@@ -1,4 +1,3 @@
-/*
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.messages.AttackEvent;
@@ -31,8 +30,8 @@ class MessageBusImplTest {
         //precons: exists event s.t. it has a future object matching it.
         // the event was sent to a MS(microservice), and the MS finished the job.
     void complete() {
-
-        AttackEvent att = new AttackEvent(); //let us assume hansolo took the event
+        int[] ewoks = {1,2};
+        AttackEvent att = new AttackEvent(ewoks,1); //let us assume hansolo took the event
         Future<Boolean> future = m.sendEvent(att);
         hansolo.complete(att, true);
         assertTrue(future.isDone());
@@ -65,8 +64,9 @@ class MessageBusImplTest {
         LinkedList<Integer> received = new LinkedList<Integer>();
         hansolo.subscribeEvent(AttackEvent.class, c ->received.addLast(1));
         R2D2.subscribeEvent(AttackEvent.class, c ->received.addLast(2));
-        m.sendEvent(new AttackEvent());
-        m.sendEvent(new AttackEvent());
+        int[] ewoks = {1,2};
+        m.sendEvent(new AttackEvent(ewoks,1));
+        m.sendEvent(new AttackEvent(ewoks,1));
         hansolo.run(); // in the run method, han solo calls awaitMessage function
         int sum = received.get(0)+received.get(1);
         // if round robin works, we get that han solo and R2 got 1 mission each.
@@ -96,9 +96,9 @@ class MessageBusImplTest {
         R2D2.subscribeBroadcast(attackDone.getClass(),c ->received.addLast(2));
 
         m.unregister(hansolo);
-
-        m.sendEvent(new AttackEvent());
-        m.sendEvent(new AttackEvent());
+        int[] ewoks = {1,2};
+        m.sendEvent(new AttackEvent(ewoks,1));
+        m.sendEvent(new AttackEvent(ewoks,1));
         m.sendBroadcast(attackDone);
 
         for (Integer curr: received) {
@@ -115,4 +115,3 @@ class MessageBusImplTest {
     void subscribeBroadcast() {
     }
 }
-*/

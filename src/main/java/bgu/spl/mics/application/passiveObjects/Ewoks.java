@@ -1,7 +1,8 @@
 package bgu.spl.mics.application.passiveObjects;
 
-
+import bgu.spl.mics.application.jsonInput;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive object representing the resource manager.
@@ -13,19 +14,26 @@ import java.util.Arrays;
  */
 public class Ewoks { //needs to be initialized as singleton, while parsing jason
     private Ewok[] soldiers;
-    private static Ewoks instance = null;
 
-    public Ewoks(int numOfEwoks) {
+
+
+    private static class ewoksHolder{
+
+        private static Ewoks instance = new Ewoks(jsonInput.getInstance().getEwoks());
+   }
+    private Ewoks(int numOfEwoks) {
+
         soldiers = new Ewok[numOfEwoks + 1]; //for convenience, Ewok in cell i has serial num i.
         soldiers[0] = null;
         for (int i = 1; i <= numOfEwoks; i++) {
             soldiers[i] = new Ewok(i);
         }
-        instance=this;
+
     }
 
+
     public static Ewoks getInstance() {
-        return instance;
+               return ewoksHolder.instance;
     }
 
     public void acquireEwoks(int[] need) {
@@ -42,7 +50,7 @@ public class Ewoks { //needs to be initialized as singleton, while parsing jason
             }
         }
     }
-            //TODO MAKE SURE THIS CRAP WORKS
+
     public void releaseEwoks(int[] need) {
         Arrays.sort(need);
         for (int i=0;i<need.length;i++) {

@@ -71,7 +71,7 @@ public class Future<T> {
      * wait for {@code timeout} TimeUnits {@code unit}. If time has
      * elapsed, return null.
      */
-    public synchronized T get(long timeout, TimeUnit unit) {//TODO we should think about sleep with interuption?
+    public synchronized T get(long timeout, TimeUnit unit) {
         if (!isDone) {
             try {
                 wait(unit.toMillis(timeout));

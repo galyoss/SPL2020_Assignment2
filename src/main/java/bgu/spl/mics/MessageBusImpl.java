@@ -18,9 +18,11 @@ public class MessageBusImpl implements MessageBus {
     private Dictionary<MicroService, Queue<Message>> name_messagesQueue;
     private LinkedList<Pair<Class<? extends Message>, LinkedList<MicroService>>> event_subsList;
     private AtomicInteger event_counter;
-    private static MessageBusImpl instance = null;
 
 
+    private static class MBholder{
+        private static MessageBusImpl instance = new MessageBusImpl();
+    }
     private MessageBusImpl() {
         future_event = new Hashtable<>();
         name_messagesQueue = new Hashtable<>();
@@ -29,10 +31,8 @@ public class MessageBusImpl implements MessageBus {
     }
 
 
-    public static synchronized MessageBusImpl getMessageBus() {
-        if (instance == null)
-            instance = new MessageBusImpl();
-        return instance;
+    public static MessageBusImpl getMessageBus() {
+        return MBholder.instance;
     }
 
     private void subscribeMessage(Class<? extends Message> type, MicroService m) {
@@ -82,7 +82,7 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public void sendBroadcast(Broadcast b) {//TODO get answer from forum regarding w8 or drop
+    public void sendBroadcast(Broadcast b) {
         LinkedList<MicroService> subsList = findSubsList(b.getClass());
 
         if (subsList != null) {
@@ -98,11 +98,8 @@ public class MessageBusImpl implements MessageBus {
 
 
     // in this function we are returning the microservice which will have the event added to it's Q
-    private <T> MicroService findSub(Event<T> e) { //TODO iterator over instead of for
-//        for (int i = 0; i < event_subsList.size(); i++) {
-//
-//            Pair<Message, LinkedList<MicroService>> curr = event_subsList.get(i);
-//            if (curr.first.getClass() == e.getClass()) { //found subscribers lists for this event
+    private <T> MicroService findSub(Event<T> e) {
+
 
         LinkedList<MicroService> subsList = findSubsList(e.getClass());
         if (subsList != null) {
@@ -142,12 +139,15 @@ public class MessageBusImpl implements MessageBus {
 
     @Override
     public void register(MicroService m) {
-        name_messagesQueue.put(m, new LinkedList<>());
+        synchronized (name_messagesQueue){
+            name_messagesQueue.put(m, new LinkedList<>());
+        }
+
 
     }
 
     @Override
-    public void unregister(MicroService m) {//TODO CHECK ABOUT UNLISTING ALL RELEVANT CRAP
+    public void unregister(MicroService m) {
         synchronized (name_messagesQueue) {
             if (name_messagesQueue.get(m) != null)
                 name_messagesQueue.remove(m);
@@ -156,7 +156,7 @@ public class MessageBusImpl implements MessageBus {
     }
 
     @Override
-    public Message awaitMessage(MicroService m) throws InterruptedException {//TODO get answers from forum regarding awaitMessage b4 registration
+    public Message awaitMessage(MicroService m) throws InterruptedException {
         // assuming initialized b4 await message
         Queue<Message> currQ = name_messagesQueue.get(m);
         if (currQ==null)

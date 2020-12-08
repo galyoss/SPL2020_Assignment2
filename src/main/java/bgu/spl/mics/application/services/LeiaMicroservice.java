@@ -26,6 +26,7 @@ public class LeiaMicroservice extends MicroService {
 	private Attack[] attacks;
 	private AttackEvent[] attackEvents;
 	private int attCounter;
+
 	
     public LeiaMicroservice(Attack[] attacks) {
         super("Leia");
@@ -61,7 +62,7 @@ public class LeiaMicroservice extends MicroService {
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
             @Override
             public void call(starBombedBC c) {
-                System.out.println("starbombed LEIA"); //TODO
+                System.out.println("starbombed LEIA");
                 Diary.getDiary().setLeiaTerminate(System.currentTimeMillis());
                 terminate();
 

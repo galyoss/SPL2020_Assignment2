@@ -53,7 +53,7 @@ public class HanSoloMicroservice extends MicroService {
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
             @Override
             public void call(starBombedBC c) {
-                System.out.println("starbombed HANSO"); //TODO
+                System.out.println("starbombed HANSO");
                 Diary.getDiary().setHanSoloFinish(lastAtt);
                 Diary.getDiary().setHanSoloTerminate(System.currentTimeMillis());
                 terminate();

@@ -41,7 +41,7 @@ public class R2D2Microservice extends MicroService {
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
             @Override
             public void call(starBombedBC c) {
-                System.out.println("starbombed R2"); //TODO
+                System.out.println("starbombed R2");
                 Diary.getDiary().setR2D2Terminate(System.currentTimeMillis());
                 terminate();
             }

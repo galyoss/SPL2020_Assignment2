@@ -23,19 +23,19 @@ public class Diary { //needs to be initialized as singleton
     long C3POTerminate;
     long R2D2Terminate;
     long LandoTerminate;
-    static Diary instance = null;
+
+
+    private static class diaryHolder{
+        private static Diary instance = new Diary();
+    }
 
 
     private Diary() {
         totalAttacks = new AtomicInteger(0);
     }
 
-    public synchronized static Diary getDiary() {
-        if (instance == null) {
-            Diary d = new Diary();
-            instance = d;
-        }
-        return instance;
+    public static Diary getDiary() {
+        return diaryHolder.instance;
     }
 
     public int getTotalAttacks() {

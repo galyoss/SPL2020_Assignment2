@@ -51,7 +51,7 @@ public class C3POMicroservice extends MicroService {//intialize while constructi
         subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
             @Override
             public void call(starBombedBC c) {
-                System.out.println("starbombed C3PO"); //TODO
+                System.out.println("starbombed C3PO");
                 Diary.getDiary().setC3POFinish(lastAtt);
                 Diary.getDiary().setC3POTerminate(System.currentTimeMillis());
                 terminate();

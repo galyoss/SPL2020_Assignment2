@@ -1,5 +1,6 @@
 package bgu.spl.mics;
 
+import bgu.spl.mics.application.passiveObjects.CountDownLatch;
 import bgu.spl.mics.application.passiveObjects.Diary;
 
 import java.util.Dictionary;
@@ -92,7 +93,7 @@ public abstract class MicroService implements Runnable {
      *                 {@code type} are taken from this micro-service message
      *                 queue.
      */
-    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {//TODO wtf callback
+    protected final <B extends Broadcast> void subscribeBroadcast(Class<B> type, Callback<B> callback) {
         telegram.subscribeBroadcast(type,this);
         calls.put(type,callback);
     }
@@ -168,12 +169,13 @@ public abstract class MicroService implements Runnable {
     } // COMPLETED
 
     /**
-     * The entry point of the micro-service. TODO: you must complete this code
+     * The entry point of the micro-service.
      * otherwise you will end up in an infinite loop.
      */
     @Override
     public final void run() { //general run method, each MS needs to terminate itself after this method
     	initialize();
+        CountDownLatch.getInstance().decrease();
     	while(isActive){
     	    Message curr;
     	    try{

@@ -1,12 +1,16 @@
 package bgu.spl.mics.application;
 
 import bgu.spl.mics.application.passiveObjects.Attack;
+import bgu.spl.mics.application.passiveObjects.CountDownLatch;
 import bgu.spl.mics.application.passiveObjects.Diary;
 import bgu.spl.mics.application.passiveObjects.Ewoks;
 import bgu.spl.mics.application.services.*;
+import com.google.gson.Gson;
 
 import java.awt.*;
+import java.io.*;
 import java.util.LinkedList;
+import java.util.TreeMap;
 
 /** This is the Main class of the application. You should parse the input file,
  * create the different components of the application, and run the system.
@@ -14,36 +18,54 @@ import java.util.LinkedList;
  */
 public class Main {
 	public static void main(String[] args) {
-		//TODO leia needs to initialize Ewoks
-		// json parsing
+
 		System.out.println("start run");
 
-		Ewoks ewoks = new Ewoks(2); //TODO json.ewoks.size()
-		LinkedList<Integer> l1 = new LinkedList<>();
-		l1.add(1);
-		l1.add(2);
-		LinkedList<Integer> l2 = new LinkedList<>();
-		l2.add(2);
-		l2.add(1);
-		Attack[] attacks = {new Attack(l1, 1000), new Attack(l2, 1000)};
-		Thread leia = new Thread(new LeiaMicroservice(attacks), "Leia");//TODO json.attacks
+
+
+		Gson gson = new Gson();
+		String inputPath = args[0];
+		String outputPath = args[1];
+		jsonInput js = jsonInput.getInstance();
+		try {
+			js = gson.fromJson(new FileReader(inputPath),jsonInput.class);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		jsonInput test = jsonInput.getInstance();
+
+
+
+
+
+
+
+
+
+		Thread leia = new Thread(new LeiaMicroservice(js.getAttacks()), "Leia");
 		Thread hansolo = new Thread(new HanSoloMicroservice(), "Hansolo");
 		Thread C3PO = new Thread(new C3POMicroservice(), "C3PO");
-		Thread R2 = new Thread(new R2D2Microservice(2000),"R2"); //TODO json.R2.Duration
-		Thread lando = new Thread(new LandoMicroservice(2000), "Lando"); //TODO json.lando.duration
+		Thread R2 = new Thread(new R2D2Microservice(js.getR2D2()),"R2");
+		Thread lando = new Thread(new LandoMicroservice(js.getLando()), "Lando");
 
 
-
+		CountDownLatch leiacounter = new CountDownLatch(4);
 		hansolo.start();
 		C3PO.start();
 		R2.start();
 		lando.start();
-		System.out.println("now about to start leia");
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		synchronized (CountDownLatch.getInstance().getAtomic()) {
+
+
+			while (leiacounter.getValue() != 0) {
+				try {
+					leiacounter.getAtomic().wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
+
 		leia.start();
 		System.out.println("never get here");
 
@@ -59,10 +81,13 @@ public class Main {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		String json = gson.toJson(Diary.getDiary());
 
-		//now when reach here, all threads done
-		//TODO: output diary to json somehow
 		System.out.println("run everything");
+
+		try (PrintWriter out = new PrintWriter(outputPath)) {
+			out.println(json);
+		} catch (FileNotFoundException e) {}
 
 	}
 }
