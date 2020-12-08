@@ -156,7 +156,7 @@ public abstract class MicroService implements Runnable {
      */
     protected final void terminate() {
     	isActive=false;
-        System.out.println(Thread.currentThread().getName() + " will terminate now");
+
     }
 
     /**
@@ -179,13 +179,8 @@ public abstract class MicroService implements Runnable {
     	    Message curr;
     	    try{
     	        curr = telegram.awaitMessage(this);
-                System.out.println(Thread.currentThread().getName() + " recieved message type: " + curr.getClass());
-                if (curr instanceof Event)
-                    System.out.println(((Event<?>) curr).getSerial());
                 calls.get(curr.getClass()).call(curr);
-                System.out.println(Thread.currentThread().getName() + " finished message type: " + curr.getClass());
             }catch (Exception ignored){
-                System.out.println(ignored);
             }
         }
     }

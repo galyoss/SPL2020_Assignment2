@@ -2,7 +2,6 @@ package bgu.spl.mics.application.passiveObjects;
 
 import bgu.spl.mics.application.jsonInput;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Passive object representing the resource manager.

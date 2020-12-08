@@ -1,14 +1,11 @@
 package bgu.spl.mics.application.services;
 
 
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
-import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.broadcasts.*;
 import bgu.spl.mics.application.passiveObjects.*;
 
-import java.sql.Timestamp;
 
 /**
  * HanSoloMicroservices is in charge of the handling {@link AttackEvent}.
@@ -19,7 +16,6 @@ import java.sql.Timestamp;
  * You MAY change constructor signatures and even add new public constructors.
  */
 public class HanSoloMicroservice extends MicroService {
-    private int attCounter;
     private long lastAtt;
     private Ewoks ewoks;
 
@@ -32,39 +28,26 @@ public class HanSoloMicroservice extends MicroService {
     @Override
     protected void initialize() {
         register(this);
-        subscribeEvent(AttackEvent.class, new Callback<AttackEvent>() {
-            @Override
-            public void call(AttackEvent c) {
-                // aquire ewoks, sleep for duration, release ewoks, send done, complete, update timestamp
-                ewoks.acquireEwoks(c.getEwoksNeeded());
-                try {
-                    Thread.sleep(c.getDuration());
-                } catch (InterruptedException e) {
-                }
-                lastAtt = System.currentTimeMillis();
-                ewoks.releaseEwoks(c.getEwoksNeeded());
-                complete(c, true);
-                sendBroadcast(new attackDoneBC());
-
-
-
+        subscribeEvent(AttackEvent.class, c -> {
+            // aquire ewoks, sleep for duration, release ewoks, send done, complete, update timestamp
+            ewoks.acquireEwoks(c.getEwoksNeeded());
+            try {
+                Thread.sleep(c.getDuration());
+            } catch (InterruptedException e) {
             }
-        });
-        subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
-            @Override
-            public void call(starBombedBC c) {
-                System.out.println("starbombed HANSO");
-                Diary.getDiary().setHanSoloFinish(lastAtt);
-                Diary.getDiary().setHanSoloTerminate(System.currentTimeMillis());
-                terminate();
-            }
-        });
-        subscribeBroadcast(attackDoneBC.class, new Callback<attackDoneBC>() {
+            lastAtt = System.currentTimeMillis();
+            ewoks.releaseEwoks(c.getEwoksNeeded());
+            complete(c, true);
+            sendBroadcast(new attackDoneBC());
 
-            @Override
-            public void call(attackDoneBC c) {
-                Diary.getDiary().increaseAttack();
-            }
+
+
         });
+        subscribeBroadcast(starBombedBC.class, c -> {
+            Diary.getDiary().setHanSoloFinish(lastAtt);
+            Diary.getDiary().setHanSoloTerminate(System.currentTimeMillis());
+            terminate();
+        });
+        subscribeBroadcast(attackDoneBC.class, c -> Diary.getDiary().increaseAttack());
     }
 }

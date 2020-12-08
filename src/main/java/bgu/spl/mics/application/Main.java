@@ -18,11 +18,6 @@ import java.util.TreeMap;
  */
 public class Main {
 	public static void main(String[] args) {
-
-		System.out.println("start run");
-
-
-
 		Gson gson = new Gson();
 		String inputPath = args[0];
 		String outputPath = args[1];
@@ -34,20 +29,11 @@ public class Main {
 		}
 		jsonInput test = jsonInput.getInstance();
 
-
-
-
-
-
-
-
-
 		Thread leia = new Thread(new LeiaMicroservice(js.getAttacks()), "Leia");
 		Thread hansolo = new Thread(new HanSoloMicroservice(), "Hansolo");
 		Thread C3PO = new Thread(new C3POMicroservice(), "C3PO");
 		Thread R2 = new Thread(new R2D2Microservice(js.getR2D2()),"R2");
 		Thread lando = new Thread(new LandoMicroservice(js.getLando()), "Lando");
-
 
 		CountDownLatch leiacounter = new CountDownLatch(4);
 		hansolo.start();
@@ -55,8 +41,6 @@ public class Main {
 		R2.start();
 		lando.start();
 		synchronized (CountDownLatch.getInstance().getAtomic()) {
-
-
 			while (leiacounter.getValue() != 0) {
 				try {
 					leiacounter.getAtomic().wait();
@@ -67,12 +51,8 @@ public class Main {
 		}
 
 		leia.start();
-		System.out.println("never get here");
-
-
 
 		try {
-			System.out.println("main join");
 			hansolo.join();
 			C3PO.join();
 			R2.join();
@@ -82,8 +62,6 @@ public class Main {
 			e.printStackTrace();
 		}
 		String json = gson.toJson(Diary.getDiary());
-
-		System.out.println("run everything");
 
 		try (PrintWriter out = new PrintWriter(outputPath)) {
 			out.println(json);

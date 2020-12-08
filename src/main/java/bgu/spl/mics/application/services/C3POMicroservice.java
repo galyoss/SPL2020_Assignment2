@@ -1,6 +1,5 @@
 package bgu.spl.mics.application.services;
 
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.AttackEvent;
 import bgu.spl.mics.application.messages.broadcasts.attackDoneBC;
@@ -30,32 +29,25 @@ public class C3POMicroservice extends MicroService {//intialize while constructi
     @Override
     protected void initialize() {
         register(this);
-        subscribeEvent(AttackEvent.class, new Callback<AttackEvent>() {
-            @Override
-            public void call(AttackEvent c) {
-                // aquire ewoks, sleep for duration, release ewoks, send done, complete, update timestamp
-                ewoks.acquireEwoks(c.getEwoksNeeded());
-                try {
-                    Thread.sleep(c.getDuration());
-                } catch (InterruptedException e) {
-                }
-                lastAtt = System.currentTimeMillis();
-                ewoks.releaseEwoks(c.getEwoksNeeded());
-                complete(c, true);
-                sendBroadcast(new attackDoneBC());
-
-
-
+        subscribeEvent(AttackEvent.class, c -> {
+            // aquire ewoks, sleep for duration, release ewoks, send done, complete, update timestamp
+            ewoks.acquireEwoks(c.getEwoksNeeded());
+            try {
+                Thread.sleep(c.getDuration());
+            } catch (InterruptedException e) {
             }
+            lastAtt = System.currentTimeMillis();
+            ewoks.releaseEwoks(c.getEwoksNeeded());
+            complete(c, true);
+            sendBroadcast(new attackDoneBC());
+
+
+
         });
-        subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
-            @Override
-            public void call(starBombedBC c) {
-                System.out.println("starbombed C3PO");
-                Diary.getDiary().setC3POFinish(lastAtt);
-                Diary.getDiary().setC3POTerminate(System.currentTimeMillis());
-                terminate();
-            }
+        subscribeBroadcast(starBombedBC.class, c -> {
+            Diary.getDiary().setC3POFinish(lastAtt);
+            Diary.getDiary().setC3POTerminate(System.currentTimeMillis());
+            terminate();
         });
 
     }

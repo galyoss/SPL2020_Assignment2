@@ -1,9 +1,6 @@
 package bgu.spl.mics.application.services;
-
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.broadcasts.*;
-
 import bgu.spl.mics.MicroService;
 import bgu.spl.mics.application.messages.DeactivationEvent;
 import bgu.spl.mics.application.passiveObjects.*;
@@ -27,24 +24,17 @@ public class R2D2Microservice extends MicroService {
     @Override
     protected void initialize() {
         register(this);
-        subscribeEvent(allAttacksDone.class, new Callback<allAttacksDone>() {
-            @Override
-            public void call(allAttacksDone c) {
-                try {
-                    Thread.sleep(duration);
-                } catch (InterruptedException e) {}
-                Diary.getDiary().setR2D2Deactivate(System.currentTimeMillis());
-                R2D2Microservice.super.complete(c,true);
+        subscribeEvent(allAttacksDone.class, c -> {
+            try {
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {}
+            Diary.getDiary().setR2D2Deactivate(System.currentTimeMillis());
+            R2D2Microservice.super.complete(c,true);
 
-            }
         });
-        subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
-            @Override
-            public void call(starBombedBC c) {
-                System.out.println("starbombed R2");
-                Diary.getDiary().setR2D2Terminate(System.currentTimeMillis());
-                terminate();
-            }
+        subscribeBroadcast(starBombedBC.class, c -> {
+            Diary.getDiary().setR2D2Terminate(System.currentTimeMillis());
+            terminate();
         });
     }
 }

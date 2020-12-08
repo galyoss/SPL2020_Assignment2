@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CountDownLatch {
 
-    private AtomicInteger counter;
+    final private AtomicInteger counter;
     private static CountDownLatch instance;
 
     public CountDownLatch(int val){

@@ -1,5 +1,4 @@
 package bgu.spl.mics.application.services;
-import bgu.spl.mics.Callback;
 import bgu.spl.mics.application.messages.*;
 import bgu.spl.mics.application.messages.broadcasts.*;
 import bgu.spl.mics.MicroService;
@@ -22,24 +21,17 @@ public class LandoMicroservice  extends MicroService {//intialize while construc
     @Override
     protected void initialize() {
         super.register(this);
-        subscribeEvent(starDestroyerEvent.class, new Callback<starDestroyerEvent>() {
-            @Override
-            public void call(starDestroyerEvent c) {
-                try {
-                    Thread.sleep(duration);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                sendBroadcast(new starBombedBC());
+        subscribeEvent(starDestroyerEvent.class, c -> {
+            try {
+                Thread.sleep(duration);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            sendBroadcast(new starBombedBC());
         });
-        subscribeBroadcast(starBombedBC.class, new Callback<starBombedBC>() {
-            @Override
-            public void call(starBombedBC c) {
-                System.out.println("starbombed LANDO");
-                Diary.getDiary().setLandoTerminate(System.currentTimeMillis());
-                terminate();
-            }
+        subscribeBroadcast(starBombedBC.class, c -> {
+            Diary.getDiary().setLandoTerminate(System.currentTimeMillis());
+            terminate();
         });
     }
 }

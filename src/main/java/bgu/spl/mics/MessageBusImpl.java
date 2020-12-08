@@ -46,7 +46,7 @@ public class MessageBusImpl implements MessageBus {
                 }
             }
             // if reached here, then MB doesnt know this event type, create new pair
-            LinkedList<MicroService> newSubList = new LinkedList<MicroService>();
+            LinkedList<MicroService> newSubList = new LinkedList<>();
             newSubList.add(m);
             event_subsList.add(new Pair<>(type, newSubList));
         }//sync events_subs
@@ -164,13 +164,10 @@ public class MessageBusImpl implements MessageBus {
         synchronized (currQ) {
             while (currQ.isEmpty()) {
                 try {
-                    System.out.println(Thread.currentThread().getName()+" waits");
                     currQ.wait();
 
                 }
-                catch (Exception e){
-                    System.out.println(e);
-                }
+                catch (Exception e){}
             }
             return currQ.remove();
 
