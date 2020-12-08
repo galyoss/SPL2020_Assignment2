@@ -1,7 +1,6 @@
 package bgu.spl.mics;
 
 import bgu.spl.mics.application.passiveObjects.CountDownLatch;
-import bgu.spl.mics.application.passiveObjects.Diary;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -181,6 +180,8 @@ public abstract class MicroService implements Runnable {
     	    try{
     	        curr = telegram.awaitMessage(this);
                 System.out.println(Thread.currentThread().getName() + " recieved message type: " + curr.getClass());
+                if (curr instanceof Event)
+                    System.out.println(((Event<?>) curr).getSerial());
                 calls.get(curr.getClass()).call(curr);
                 System.out.println(Thread.currentThread().getName() + " finished message type: " + curr.getClass());
             }catch (Exception ignored){
