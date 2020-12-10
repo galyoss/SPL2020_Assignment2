@@ -18,6 +18,7 @@ public class MessageBusImpl implements MessageBus {
     private Dictionary<MicroService, Queue<Message>> name_messagesQueue;
     private LinkedList<Pair<Class<? extends Message>, LinkedList<MicroService>>> event_subsList;
     private AtomicInteger event_counter;
+    private AtomicInteger registeredNum;
 
 
     private static class MBholder{
@@ -28,6 +29,7 @@ public class MessageBusImpl implements MessageBus {
         name_messagesQueue = new Hashtable<>();
         event_subsList = new LinkedList<>();
         event_counter = new AtomicInteger(0);
+        registeredNum = new AtomicInteger(0);
     }
 
 
@@ -128,7 +130,7 @@ public class MessageBusImpl implements MessageBus {
             future_event.put(e.getSerial(), future);
             synchronized (name_messagesQueue.get(m)) { //message Q needs to be ThreadSafe
                 name_messagesQueue.get(m).add(e); //adding event to the MS's Q.
-                name_messagesQueue.get(m).notifyAll();
+                (name_messagesQueue.get(m)).notifyAll();
             }
             return future;
 
@@ -142,15 +144,36 @@ public class MessageBusImpl implements MessageBus {
         synchronized (name_messagesQueue){
             name_messagesQueue.put(m, new LinkedList<>());
         }
+        registeredNum.incrementAndGet();
 
 
     }
 
     @Override
     public void unregister(MicroService m) {
+        boolean unregistered = false;
         synchronized (name_messagesQueue) {
-            if (name_messagesQueue.get(m) != null)
+            if (name_messagesQueue.get(m) != null) {
                 name_messagesQueue.remove(m);
+                unregistered=true;
+            }
+
+        }
+        int num = registeredNum.decrementAndGet();
+        if (num==0 & unregistered)
+            resetMessagebus();
+
+    }
+
+    public void resetMessagebus() {
+        synchronized (name_messagesQueue){
+            synchronized (event_subsList){
+                future_event = new Hashtable<>();
+                name_messagesQueue = new Hashtable<>();
+                event_subsList = new LinkedList<>();
+                event_counter = new AtomicInteger(0);
+                registeredNum = new AtomicInteger(0);
+            }
         }
 
     }

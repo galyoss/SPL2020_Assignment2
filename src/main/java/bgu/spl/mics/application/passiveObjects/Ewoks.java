@@ -18,7 +18,7 @@ public class Ewoks { //needs to be initialized as singleton, while parsing jason
 
     private static class ewoksHolder{
 
-        private static Ewoks instance = new Ewoks(jsonInput.getInstance().getEwoks());
+        private static Ewoks instance = new Ewoks(100);
    }
     private Ewoks(int numOfEwoks) {
 

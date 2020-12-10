@@ -14,6 +14,48 @@ public class Diary { //needs to be initialized as singleton
     long R2D2Deactivate;
     long LeiaTerminate;
     long HanSoloTerminate;
+
+
+    public void setTotalAttacks() {
+        this.totalAttacks = new AtomicInteger(0);
+    }
+
+    public AtomicInteger getTotalAttacks() {
+        return totalAttacks;
+    }
+
+    public long getHanSoloFinish() {
+        return HanSoloFinish;
+    }
+
+    public long getC3POFinish() {
+        return C3POFinish;
+    }
+
+    public long getR2D2Deactivate() {
+        return R2D2Deactivate;
+    }
+
+    public long getLeiaTerminate() {
+        return LeiaTerminate;
+    }
+
+    public long getHanSoloTerminate() {
+        return HanSoloTerminate;
+    }
+
+    public long getC3POTerminate() {
+        return C3POTerminate;
+    }
+
+    public long getR2D2Terminate() {
+        return R2D2Terminate;
+    }
+
+    public long getLandoTerminate() {
+        return LandoTerminate;
+    }
+
     long C3POTerminate;
     long R2D2Terminate;
     long LandoTerminate;

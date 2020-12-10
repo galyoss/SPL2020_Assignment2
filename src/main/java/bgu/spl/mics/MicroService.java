@@ -183,5 +183,6 @@ public abstract class MicroService implements Runnable {
             }catch (Exception ignored){
             }
         }
+    	telegram.unregister(this);
     }
 }
