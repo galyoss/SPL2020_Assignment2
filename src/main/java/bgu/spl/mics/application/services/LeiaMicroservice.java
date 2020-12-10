@@ -45,11 +45,6 @@ public class LeiaMicroservice extends MicroService {
 
     @Override
     protected void initialize() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         register(this);
         subscribeBroadcast(starBombedBC.class, c -> {
             Diary.getDiary().setLeiaTerminate(System.currentTimeMillis());

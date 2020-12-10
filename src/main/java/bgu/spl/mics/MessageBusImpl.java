@@ -18,6 +18,7 @@ public class MessageBusImpl implements MessageBus {
     private Dictionary<MicroService, Queue<Message>> name_messagesQueue;
     private LinkedList<Pair<Class<? extends Message>, LinkedList<MicroService>>> event_subsList;
     private AtomicInteger event_counter;
+    private AtomicInteger registered;
 
 
     private static class MBholder{
@@ -28,6 +29,7 @@ public class MessageBusImpl implements MessageBus {
         name_messagesQueue = new Hashtable<>();
         event_subsList = new LinkedList<>();
         event_counter = new AtomicInteger(0);
+        registered = new AtomicInteger(0);
     }
 
 
@@ -142,15 +144,28 @@ public class MessageBusImpl implements MessageBus {
         synchronized (name_messagesQueue){
             name_messagesQueue.put(m, new LinkedList<>());
         }
+        registered.incrementAndGet();
 
 
     }
 
+    private void resetMB(){
+        synchronized (event_subsList){
+            future_event = new Hashtable<>();
+            name_messagesQueue = new Hashtable<>();
+            event_subsList = new LinkedList<>();
+            event_counter = new AtomicInteger(0);
+            registered = new AtomicInteger(0);
+            }
+    }
     @Override
     public void unregister(MicroService m) {
         synchronized (name_messagesQueue) {
-            if (name_messagesQueue.get(m) != null)
+            if (name_messagesQueue.get(m) != null) {
                 name_messagesQueue.remove(m);
+                if(registered.decrementAndGet()==0)
+                    resetMB();
+            }
         }
 
     }
